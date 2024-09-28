@@ -59,7 +59,16 @@ const App: React.FC = () => {
                 <Route path="/profile" element={<ProfilePage />} />
                 <Route
                   path="/project/:projectId"
-                  element={<ProjectBoard projects={projects} />}
+                  element={
+                    <ProjectBoard
+                      projects={projects}
+                      setProjects={function (
+                        value: React.SetStateAction<Project[]>
+                      ): void {
+                        throw new Error("Function not implemented.");
+                      }}
+                    />
+                  }
                 />
               </Routes>
             </Box>

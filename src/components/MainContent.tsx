@@ -1,7 +1,6 @@
-// MainComponent.tsx
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { v4 as uuidv4 } from "uuid";
+import { useNavigate } from "react-router-dom"; // Импортируем useNavigate для перенаправления
+import { v4 as uuidv4 } from "uuid"; // Используем uuid для генерации ID проектов
 import {
   Grid,
   Card,
@@ -12,6 +11,7 @@ import {
   Box,
   TextField,
 } from "@mui/material";
+import axios from "axios"; // Импортируем axios для работы с API
 
 type Project = {
   id: string;
@@ -39,27 +39,40 @@ const MainComponent: React.FC<MainComponentProps> = ({
   projects,
   setProjects,
 }) => {
-  const [open, setOpen] = useState<boolean>(false);
-  const [projectName, setProjectName] = useState<string>("");
-  const navigate = useNavigate();
+  const [open, setOpen] = useState<boolean>(false); // Для управления открытием модального окна
+  const [projectName, setProjectName] = useState<string>(""); // Для хранения названия нового проекта
+  const navigate = useNavigate(); // Используем навигацию для перенаправления
 
+  // Открытие модального окна для создания проекта
   const handleOpen = () => setOpen(true);
+
+  // Закрытие модального окна и сброс данных
   const handleClose = () => {
     setOpen(false);
     setProjectName("");
   };
 
+  // Функция создания нового проекта
   const handleCreateProject = () => {
-    if (projectName.trim() === "") return;
+    if (projectName.trim() === "") return; // Проверка на пустое название проекта
 
     const newProject: Project = {
-      id: uuidv4(),
+      id: uuidv4(), // Генерация уникального ID для проекта
       name: projectName,
     };
 
-    setProjects([...projects, newProject]);
-    handleClose();
-    navigate(`/project/${newProject.id}`);
+    // Сохранение проекта на сервере
+    axios
+      .post("/api/projects", newProject) // Запрос на сервер для создания проекта
+      .then((response) => {
+        const createdProject = response.data; // Получаем созданный проект с сервера
+        setProjects([...projects, createdProject]); // Обновляем состояние проектов
+        handleClose(); // Закрываем модальное окно
+        navigate(`/project/${createdProject.id}`); // Перенаправляем на страницу доски проекта
+      })
+      .catch((error) => {
+        console.error("Ошибка при создании проекта:", error); // Логируем ошибку
+      });
   };
 
   return (
@@ -78,7 +91,7 @@ const MainComponent: React.FC<MainComponentProps> = ({
         {/* Карточка для создания нового проекта */}
         <Grid item xs={12} sm={6} md={4}>
           <Card
-            onClick={handleOpen}
+            onClick={handleOpen} // Открываем модальное окно при клике на карточку
             sx={{
               height: 200,
               display: "flex",
@@ -105,7 +118,7 @@ const MainComponent: React.FC<MainComponentProps> = ({
         {projects.map((project) => (
           <Grid item xs={12} sm={6} md={4} key={project.id}>
             <Card
-              onClick={() => navigate(`/project/${project.id}`)}
+              onClick={() => navigate(`/project/${project.id}`)} // Перенаправляем на страницу проекта при клике
               sx={{
                 backgroundColor: "#1f2d3d",
                 cursor: "pointer",
@@ -126,7 +139,6 @@ const MainComponent: React.FC<MainComponentProps> = ({
                 >
                   {project.name}
                 </Typography>
-                {/* Добавьте дополнительную информацию о проекте здесь */}
               </CardContent>
             </Card>
           </Grid>
@@ -134,19 +146,9 @@ const MainComponent: React.FC<MainComponentProps> = ({
       </Grid>
 
       {/* Модальное окно для создания нового проекта */}
-      <Modal
-        open={open}
-        onClose={handleClose}
-        aria-labelledby="create-project-modal"
-        aria-describedby="modal-to-create-new-project"
-      >
+      <Modal open={open} onClose={handleClose}>
         <Box sx={modalStyle}>
-          <Typography
-            id="create-project-modal"
-            variant="h6"
-            component="h2"
-            gutterBottom
-          >
+          <Typography variant="h6" component="h2" gutterBottom>
             Создать новый проект
           </Typography>
           <TextField

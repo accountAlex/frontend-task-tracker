@@ -1,20 +1,4 @@
 // types.ts
-export type Project = {
-  id: string;
-  name: string;
-};
-
-export type Task = {
-  id: string;
-  title: string;
-  description: string;
-  creationDate: string; // ISO строка
-  startDate: string; // ISO строка, дата начала
-  deadline: string; // ISO строка
-  status: string; // статус задачи
-  assignedBy: string;
-  assignedTo: string;
-};
 
 export type Column = {
   id: string;
@@ -22,8 +6,23 @@ export type Column = {
   taskIds: string[];
 };
 
+export type Task = {
+  id: string;
+  title: string;
+  description: string;
+  startDate: string; // ISO строка
+  deadline: string; // ISO строка
+  status: string;
+  assignedTo: string;
+};
+
 export type Data = {
   tasks: { [key: string]: Task };
   columns: { [key: string]: Column };
   columnOrder: string[];
+};
+
+export type Project = {
+  id: string;
+  name: string;
 };
