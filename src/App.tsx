@@ -9,12 +9,7 @@ import MainComponent from "./components/MainContent.tsx";
 import ProfilePage from "./components/ProfilePage.tsx";
 import ProjectBoard from "./components/ProjectBoard.tsx";
 import Box from "@mui/material/Box";
-
-// Тип для проекта
-type Project = {
-  id: string;
-  name: string;
-};
+import { Project } from "./types.ts";
 
 const darkTheme = createTheme({
   palette: {
