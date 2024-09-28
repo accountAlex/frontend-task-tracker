@@ -1,80 +1,122 @@
-import React, { useState } from "react";
-import styled from "styled-components";
-import { FaBars, FaUser, FaBell, FaCog } from "react-icons/fa";
+// Sidebar.tsx
+import React from "react";
+import { Link } from "react-router-dom";
+import Drawer from "@mui/material/Drawer";
+import List from "@mui/material/List";
+import ListItem from "@mui/material/ListItem";
+import ListItemText from "@mui/material/ListItemText";
+import Accordion from "@mui/material/Accordion";
+import AccordionSummary from "@mui/material/AccordionSummary";
+import AccordionDetails from "@mui/material/AccordionDetails";
+import Typography from "@mui/material/Typography";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import Box from "@mui/material/Box";
+import Divider from "@mui/material/Divider";
 
-const SidebarContainer = styled.div<{ isCollapsed: boolean }>`
-  height: 100vh;
-  width: ${({ isCollapsed }) => (isCollapsed ? "70px" : "250px")};
-  background-color: #05386b; /* Темно-синий */
-  position: fixed;
-  top: 0;
-  left: 0;
-  color: white;
-  transition: width 0.4s ease;
-  display: flex;
-  flex-direction: column;
-  padding-top: 20px;
-  box-shadow: 3px 0 6px rgba(0, 0, 0, 0.1);
-  z-index: 10;
-`;
+type Project = {
+  id: string;
+  name: string;
+};
 
-const SidebarItem = styled.a`
-  display: flex;
-  align-items: center;
-  padding: 15px 20px;
-  color: white;
-  text-decoration: none;
-  font-size: 16px;
-  transition: background-color 0.3s ease;
+type SidebarProps = {
+  projects: Project[];
+};
 
-  &:hover {
-    background-color: #379683; /* Бирюзовый */
-  }
-
-  svg {
-    margin-right: 10px;
-  }
-`;
-
-const ToggleButton = styled.div`
-  margin-left: auto;
-  margin-right: auto;
-  cursor: pointer;
-  padding: 10px;
-  font-size: 24px;
-`;
-
-const SidebarLabel = styled.span<{ isCollapsed: boolean }>`
-  display: ${({ isCollapsed }) => (isCollapsed ? "none" : "inline")};
-  transition: opacity 0.2s ease;
-  opacity: ${({ isCollapsed }) => (isCollapsed ? 0 : 1)};
-`;
-
-const Sidebar = () => {
-  const [isCollapsed, setIsCollapsed] = useState(false);
-
-  const toggleSidebar = () => {
-    setIsCollapsed(!isCollapsed);
-  };
-
+const Sidebar: React.FC<SidebarProps> = ({ projects }) => {
   return (
-    <SidebarContainer isCollapsed={isCollapsed}>
-      <ToggleButton onClick={toggleSidebar}>
-        <FaBars />
-      </ToggleButton>
-      <SidebarItem href="#">
-        <FaUser />
-        <SidebarLabel isCollapsed={isCollapsed}>Профиль</SidebarLabel>
-      </SidebarItem>
-      <SidebarItem href="#">
-        <FaBell />
-        <SidebarLabel isCollapsed={isCollapsed}>Уведомления</SidebarLabel>
-      </SidebarItem>
-      <SidebarItem href="#">
-        <FaCog />
-        <SidebarLabel isCollapsed={isCollapsed}>Настройки</SidebarLabel>
-      </SidebarItem>
-    </SidebarContainer>
+    <Drawer
+      variant="permanent"
+      anchor="left"
+      sx={{
+        width: 250,
+        flexShrink: 0,
+        [`& .MuiDrawer-paper`]: {
+          width: 250,
+          boxSizing: "border-box",
+          backgroundColor: "#1f2d3d",
+          color: "#ffffff",
+        },
+      }}
+    >
+      <Box sx={{ overflow: "auto", padding: 2 }}>
+        {/* Раздел Мои команды */}
+        <Accordion
+          disableGutters
+          elevation={0}
+          sx={{ backgroundColor: "transparent", color: "#ffffff" }}
+        >
+          <AccordionSummary
+            expandIcon={<ExpandMoreIcon sx={{ color: "#ffffff" }} />}
+          >
+            <Typography variant="subtitle1">Мои команды</Typography>
+          </AccordionSummary>
+          <AccordionDetails>
+            <List>
+              <ListItem button component={Link} to="#">
+                <ListItemText primary="Команда 1" />
+              </ListItem>
+              <ListItem button component={Link} to="#">
+                <ListItemText primary="Команда 2" />
+              </ListItem>
+              <ListItem button component={Link} to="#">
+                <ListItemText primary="Команда 3" />
+              </ListItem>
+            </List>
+          </AccordionDetails>
+        </Accordion>
+
+        <Divider sx={{ backgroundColor: "#ffffff33", my: 1 }} />
+
+        {/* Раздел Мои проекты */}
+        <Accordion
+          disableGutters
+          elevation={0}
+          sx={{ backgroundColor: "transparent", color: "#ffffff" }}
+        >
+          <AccordionSummary
+            expandIcon={<ExpandMoreIcon sx={{ color: "#ffffff" }} />}
+          >
+            <Typography variant="subtitle1">Мои проекты</Typography>
+          </AccordionSummary>
+          <AccordionDetails>
+            <List>
+              {projects.length > 0 ? (
+                projects.map((project) => (
+                  <ListItem
+                    button
+                    component={Link}
+                    to={`/project/${project.id}`}
+                    key={project.id}
+                  >
+                    <ListItemText primary={project.name} />
+                  </ListItem>
+                ))
+              ) : (
+                <Typography color="error">Нет проектов</Typography>
+              )}
+            </List>
+          </AccordionDetails>
+        </Accordion>
+      </Box>
+
+      {/* Поддержка */}
+      <Box
+        sx={{
+          position: "absolute",
+          bottom: 20,
+          left: 20,
+          display: "flex",
+          alignItems: "center",
+        }}
+      >
+        <img
+          src="https://via.placeholder.com/25x25"
+          alt="Support"
+          style={{ marginRight: "10px" }}
+        />
+        <Typography>Поддержка</Typography>
+      </Box>
+    </Drawer>
   );
 };
 

@@ -1,46 +1,90 @@
+// Navbar.tsx
 import React from "react";
-import styled from "styled-components";
-import { FaSearch, FaCog, FaMoon } from "react-icons/fa";
+import { Link, useNavigate } from "react-router-dom";
+import AppBar from "@mui/material/AppBar";
+import Toolbar from "@mui/material/Toolbar";
+import Typography from "@mui/material/Typography";
+import IconButton from "@mui/material/IconButton";
+import Avatar from "@mui/material/Avatar";
+import Menu from "@mui/material/Menu";
+import MenuItem from "@mui/material/MenuItem";
+import Box from "@mui/material/Box";
+import Tooltip from "@mui/material/Tooltip";
 
-const NavbarContainer = styled.div`
-  height: 60px;
-  background-color: #05386b; /* Темно-синий */
-  color: white;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 20px;
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-`;
+const Navbar: React.FC = () => {
+  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const navigate = useNavigate();
 
-const SearchInput = styled.input`
-  background-color: #edf5e1; /* Светло-серый */
-  border: none;
-  padding: 10px;
-  color: #05386b;
-  border-radius: 4px;
-  width: 200px;
-`;
+  const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
 
-const IconContainer = styled.div`
-  display: flex;
-  gap: 15px;
-`;
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+  };
 
-const Navbar = () => {
+  const handleLogout = () => {
+    // Логика выхода из системы
+    handleMenuClose();
+  };
+
   return (
-    <NavbarContainer>
-      <SearchInput placeholder="Поиск по проектам" />
-      <IconContainer>
-        <FaSearch />
-        <FaMoon />
-        <FaCog />
-      </IconContainer>
-    </NavbarContainer>
+    <AppBar position="static" sx={{ backgroundColor: "#1f2d3d" }}>
+      <Toolbar>
+        {/* Логотип */}
+        <Avatar
+          src="https://via.placeholder.com/43x43"
+          alt="Logo"
+          sx={{ marginRight: 2 }}
+        />
+        {/* Название приложения */}
+        <Typography
+          variant="h6"
+          component={Link}
+          to="/"
+          sx={{
+            flexGrow: 1,
+            textDecoration: "none",
+            color: "inherit",
+            "&:hover": { color: "primary.main" },
+          }}
+        >
+          TaskTracker
+        </Typography>
+        {/* Аватар пользователя */}
+        <Box>
+          <Tooltip title="Открыть меню">
+            <IconButton onClick={handleMenuOpen} size="large" sx={{ p: 0 }}>
+              <Avatar
+                src="https://via.placeholder.com/40x40"
+                alt="User Avatar"
+              />
+            </IconButton>
+          </Tooltip>
+          <Menu
+            anchorEl={anchorEl}
+            open={Boolean(anchorEl)}
+            onClose={handleMenuClose}
+            onClick={handleMenuClose}
+            PaperProps={{
+              elevation: 3,
+              sx: {
+                mt: "45px",
+                backgroundColor: "#1f2d3d",
+                color: "#ffffff",
+              },
+            }}
+            transformOrigin={{ horizontal: "right", vertical: "top" }}
+            anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
+          >
+            <MenuItem onClick={() => navigate("/profile")}>Профиль</MenuItem>
+            <MenuItem onClick={handleLogout} sx={{ color: "error.main" }}>
+              Выйти
+            </MenuItem>
+          </Menu>
+        </Box>
+      </Toolbar>
+    </AppBar>
   );
 };
 
